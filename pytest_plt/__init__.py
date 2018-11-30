@@ -156,6 +156,50 @@ class Plotter(Recorder):
             self.plt.close('all')
 
 
+class Analytics(Recorder):
+    DOC_KEY = 'documentation'
+
+    def __init__(self, dirname, module_name, function_name):
+        super(Analytics, self).__init__(dirname, module_name, function_name)
+
+        self.data = {}
+        self.doc = {}
+
+    @staticmethod
+    def load(path, module, function_name):
+        modparts = module.split('.')
+        modparts = modparts[1:]
+        modparts.remove('tests')
+
+        return np.load(os.path.join(path, "%s.%s.npz" % (
+            '.'.join(modparts), function_name)))
+
+    def __enter__(self):
+        return self
+
+    def add_data(self, name, data, doc=""):
+        if name == self.DOC_KEY:
+            raise ValueError("The name '{}' is reserved.".format(self.DOC_KEY))
+
+        if self.record:
+            self.data[name] = data
+            if doc != "":
+                self.doc[name] = doc
+
+    def save_data(self):
+        if len(self.data) == 0:
+            return
+
+        npz_data = dict(self.data)
+        if len(self.doc) > 0:
+            npz_data.update({self.DOC_KEY: self.doc})
+        np.savez(self.get_filepath(ext='npz'), **npz_data)
+
+    def __exit__(self, type, value, traceback):
+        if self.record:
+            self.save_data()
+
+
 @pytest.fixture
 def plt(request):
     """A pyplot-compatible plotting interface.
@@ -175,3 +219,24 @@ def plt(request):
     plotter = Plotter(dirname, request.node.nodeid)
     request.addfinalizer(lambda: plotter.__exit__(None, None, None))
     return plotter.__enter__()
+
+
+@pytest.fixture
+def data(request):
+    """An object to store data for analysis.
+
+    Please use this if you're concerned that accuracy or speed may regress.
+
+    This will keep saved data organized in a simulator-specific folder,
+    with an automatically generated name. Raw data (for later processing)
+    can be saved with ``analytics.add_raw_data``; these will be saved in
+    separate compressed ``.npz`` files. Summary data can be saved with
+    ``analytics.add_summary_data``; these will be saved
+    in a single ``.csv`` file.
+    """
+    dirname = request.config.getvalue("data")
+    if not is_string(dirname):
+        dirname = "data"
+    analytics = Analytics(dirname, request.node.nodeid)
+    request.addfinalizer(lambda: analytics.__exit__(None, None, None))
+    return analytics.__enter__()

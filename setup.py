@@ -63,7 +63,7 @@ setup(
     },
     tests_require=tests_require,
     entry_points={
-        "pytest11": ["plt = pytest_plt"],
+        "pytest11": ["plt = pytest_plt.plugin"],
     },
     classifiers=[
         # See https://pypi.python.org/pypi?%3Aaction=list_classifiers

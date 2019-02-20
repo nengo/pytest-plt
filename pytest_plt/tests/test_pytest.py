@@ -14,6 +14,19 @@ import os
 from pytest_plt import Mock
 
 pytest_plugins = ["pytester"]
+pytest_outcomes = [
+    'passed', 'skipped', 'failed', 'error', 'xfailed', 'xpassed']
+
+
+def count_total_outcomes(outcomes):
+    """Count the total number of outcomes (tests) in an outcome dict.
+
+    The ``outcomes`` dict is obtained from ``RunResult.parseoutcomes()``.
+
+    ``outcomes`` dict can have other values (e.g. "seconds"), so we can't just
+    sum all values in the dict.
+    """
+    return sum(outcomes.get(outcome, 0) for outcome in pytest_outcomes)
 
 
 def test_mock():
@@ -33,7 +46,9 @@ def test_plt_no_plots(testdir):
     file_path.rename("package/tests/test_plt.py")
 
     result = testdir.runpytest()
-    result.assert_outcomes(passed=3)
+    outcomes = result.parseoutcomes()
+    n_tests = count_total_outcomes(outcomes)
+    assert outcomes['passed'] / n_tests == 1.0, "did not pass all tests"
 
     path = str(testdir.tmpdir)
     assert not os.path.exists(os.path.join(path, "plots"))
@@ -46,7 +61,10 @@ def test_plt_plots(testdir):
     file_path.rename("package/tests/test_plt.py")
 
     result = testdir.runpytest("--plots")
-    result.assert_outcomes(passed=3)
+    # import pdb; pdb.set_trace()
+    outcomes = result.parseoutcomes()
+    n_tests = count_total_outcomes(outcomes)
+    assert outcomes['passed'] / n_tests == 1.0, "did not pass all tests"
 
     plotdir = os.path.join(
         str(testdir.tmpdir), "plots", "package", "tests",

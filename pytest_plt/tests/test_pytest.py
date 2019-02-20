@@ -12,6 +12,7 @@ test files can be run manually by passing them to ``pytest``.
 import os
 
 from pytest_plt import Mock
+import pytest_plt.tests.test_plt as test_plt
 
 pytest_plugins = ["pytester"]
 pytest_outcomes = [
@@ -70,10 +71,7 @@ def test_plt_plots(testdir):
         str(testdir.tmpdir), "plots", "package", "tests",
     )
 
-    assert os.path.exists(os.path.join(
-        plotdir, "test_plt.py::test_simple_plot.pdf",
-    ))
-
-    assert os.path.exists(os.path.join(
-        plotdir, "test_plt.py::test_bbox_extra_artists.pdf",
-    ))
+    for test_name in test_plt.plot_tests:
+        assert os.path.exists(os.path.join(
+            plotdir, "test_plt.py::%s.pdf" % test_name,
+        ))

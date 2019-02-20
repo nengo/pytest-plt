@@ -12,7 +12,9 @@ import os
 import re
 import sys
 
-import matplotlib
+from matplotlib import use as mpl_use
+mpl_use('Agg')  # Must be done before importing pyplot
+from matplotlib import pyplot as mpl_plt
 import numpy as np
 import pytest
 
@@ -22,7 +24,7 @@ logger = logging.getLogger(__name__)
 try:
     # Prevent output if no handler set
     logger.addHandler(logging.NullHandler())
-except AttributeError:
+except AttributeError:  # pragma: no cover
     pass
 
 __copyright__ = "2018-2019 pytest_plt contributors"
@@ -45,12 +47,8 @@ def mkdir_p(path):
     except OSError as exc:
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
-        else:
+        else:  # pragma: no cover
             raise
-
-
-def pytest_configure(config):
-    matplotlib.use('Agg')
 
 
 def pytest_addoption(parser):
@@ -109,11 +107,6 @@ class Recorder(object):
     def get_filename(self, ext=""):
         return "%s.%s" % (self.nodeid, ext)
 
-    def get_filepath(self, ext=""):
-        if not self.record:
-            raise ValueError("Cannot construct path when not recording")
-        return os.path.join(self.dirname, self.get_filename(ext=ext))
-
     def __enter__(self):
         raise NotImplementedError()
 
@@ -124,8 +117,7 @@ class Recorder(object):
 class Plotter(Recorder):
     def __enter__(self):
         if self.record:
-            import matplotlib.pyplot as plt
-            self.plt = plt
+            self.plt = mpl_plt
         else:
             self.plt = Mock()
         self.plt.saveas = self.get_filename(ext='pdf')
@@ -170,8 +162,10 @@ def plt(request):
     the desired filename.
     """
     dirname = request.config.getvalue("plots")
-    if not is_string(dirname):
+    if not is_string(dirname) and dirname:
         dirname = "plots"
+    elif not dirname:
+        dirname = None
     plotter = Plotter(dirname, request.node.nodeid)
     request.addfinalizer(lambda: plotter.__exit__(None, None, None))
     return plotter.__enter__()

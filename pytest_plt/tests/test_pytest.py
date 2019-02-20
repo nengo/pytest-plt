@@ -32,12 +32,24 @@ def count_total_outcomes(outcomes):
 
 def test_mock():
     mock = Mock()
+
+    # __getitem__ and __call__ should both return another `Mock`
     assert isinstance(mock["item"], Mock)
+    assert isinstance(mock(), Mock)
+
+    # __mul__ with anything should produce 1.0
     assert mock * "Hi" == 1.0
+
+    # __getattr__ with __file__ and __path__ return "/dev/null"
     assert mock.__file__ == "/dev/null"
     assert mock.__file__ == mock.__path__
+
+    # __getattr__ with uppercase first letter returns a type
     assert mock.Type.__module__ == "pytest_plt"
     assert type(mock.Type) is type
+
+    # __getattr__ with lowercase first letter should return a `Mock`
+    assert isinstance(mock.foo, Mock)
 
 
 def test_plt_no_plots(testdir):

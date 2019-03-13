@@ -12,6 +12,7 @@ test files can be run manually by passing them to ``pytest``.
 
 import os
 
+import pytest
 from pytest_plt.plugin import Mock
 
 pytest_plugins = ["pytester"]
@@ -94,5 +95,39 @@ def test_plt_plots(testdir):
     saved = saved_plots(result)
     assert 0 < len(saved) <= n_passed
     for _, plot in saved:
-        assert plot.startswith("plots/package/tests/")
+        assert plot.startswith("plots/package.tests.")
+        assert os.path.exists(plot)
+
+
+@pytest.mark.parametrize('drop_len', [1, 3])
+def test_filename_drop_prefix(testdir, drop_len):
+    parts = ["package", "folder", "tests"]
+    drop_parts = parts[:drop_len]
+
+    for i in range(1, len(parts)+1):
+        testdir.mkpydir('/'.join(parts[:i]))
+
+    file_path = testdir.copy_example("test_plt.py")
+    file_path.rename('/'.join(parts + ["test_plt.py"]))
+
+    ini_source = r"""
+    [pytest]
+    plt_filename_drop =
+        """ + "".join(p + r"\." for p in drop_parts)
+    testdir.makeini(ini_source)
+
+    # All tests should pass
+    result = testdir.runpytest("-v", "--plots")
+    n_passed = assert_all_passed(result)
+
+    # All plots should be created
+    saved = saved_plots(result)
+    assert 0 < len(saved) <= n_passed
+    for test, plot in saved:
+        test_parts = test.split('/')
+        for part, test_part in zip(parts, test_parts):
+            assert part == test_part
+
+        test_parts = test_parts[drop_len:]
+        assert plot == "plots/" + '.'.join(test_parts) + '.pdf'
         assert os.path.exists(plot)

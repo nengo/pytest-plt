@@ -13,6 +13,7 @@ test files can be run manually by passing them to ``pytest``.
 
 import os
 
+import pytest
 from pytest_plt.plugin import Mock
 
 pytest_plugins = ["pytester"]
@@ -52,6 +53,20 @@ def assert_all_passed(result):
     return outcomes.get("passed", 0)
 
 
+def copy_all_tests(testdir, path):
+    parts = path.strip("/").split("/")
+    for i in range(1, len(parts) + 1):
+        testdir.mkpydir('/'.join(parts[:i]))
+
+    # Find all test files in the current folder, not including this one.
+    # NB: If we add additional directories, this needs to change
+    tests = [p for p in os.listdir(os.path.dirname(__file__))
+             if p.startswith("test_") and p != "test_pytest.py"]
+    for test in tests:
+        test_path = testdir.copy_example(test)
+        test_path.rename("%s/%s" % (path, test))
+
+
 def saved_plots(result):
     """Get a list of all tests with saved plots."""
     saved = []
@@ -64,10 +79,7 @@ def saved_plots(result):
 
 
 def test_plt_no_plots(testdir):
-    testdir.mkpydir("package")
-    testdir.mkpydir("package/tests")
-    file_path = testdir.copy_example("test_plt.py")
-    file_path.rename("package/tests/test_plt.py")
+    copy_all_tests(testdir, "package/tests")
 
     # All tests should pass
     result = testdir.runpytest("-v")
@@ -82,10 +94,7 @@ def test_plt_no_plots(testdir):
 
 
 def test_plt_plots(testdir):
-    testdir.mkpydir("package")
-    testdir.mkpydir("package/tests")
-    file_path = testdir.copy_example("test_plt.py")
-    file_path.rename("package/tests/test_plt.py")
+    copy_all_tests(testdir, "package/tests")
 
     # All tests should pass
     result = testdir.runpytest("-v", "--plots")
@@ -95,5 +104,66 @@ def test_plt_plots(testdir):
     saved = saved_plots(result)
     assert 0 < len(saved) <= n_passed
     for _, plot in saved:
-        assert plot.startswith("plots/package/tests/")
+        assert plot.startswith("plots/package.tests.")
         assert os.path.exists(plot)
+
+
+@pytest.mark.parametrize(
+    'prefix', ["package/", "package/folder/tests/"],
+)
+def test_filename_drop_prefix(testdir, prefix):
+    """Tests removing strings from the start of a plot filename.
+
+    This is the most common use case of filename_drop.
+    """
+    copy_all_tests(testdir, "package/folder/tests")
+    testdir.makeini("\n".join([
+        "[pytest]",
+        "plt_filename_drop =",
+        "    %s" % prefix.replace("/", r"\."),
+    ]))
+
+    # All tests should pass
+    result = testdir.runpytest("-v", "--plots")
+    n_passed = assert_all_passed(result)
+
+    # All plots should be created
+    saved = saved_plots(result)
+    assert 0 < len(saved) <= n_passed
+
+    prefix_parts = prefix.strip('/').split('/')
+    for test, plot in saved:
+        test_parts = test.split('/')
+        for prefix_part, test_part in zip(prefix_parts, test_parts):
+            assert prefix_part == test_part
+
+        test_parts = test_parts[len(prefix_parts):]
+        assert plot == "plots/%s.pdf" % '.'.join(test_parts)
+        assert os.path.exists(plot)
+
+
+def test_filename_drop_within(testdir):
+    """Tests removing strings within a plot filename, with complicated regexes.
+
+    These are less common use cases of filename_drop.
+    """
+    copy_all_tests(testdir, "package/tests")
+    testdir.makeini("\n".join([
+        "[pytest]",
+        "plt_filename_drop =",
+        r"    package\.",
+        # Matches the `test_` of the function name only
+        r"    (?<=::)test_",
+    ]))
+
+    # All tests should pass
+    result = testdir.runpytest("-v", "--plots")
+    n_passed = assert_all_passed(result)
+
+    # All plots should be created
+    saved = saved_plots(result)
+    assert 0 < len(saved) <= n_passed
+    for _, plot in saved:
+        assert plot.startswith("plots/tests.test_")
+        colon_ix = plot.index("::")
+        assert not plot[colon_ix:].startswith("::test_")

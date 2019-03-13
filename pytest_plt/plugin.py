@@ -2,6 +2,7 @@
 
 import errno
 import os
+import re
 
 from matplotlib import use as mpl_use
 mpl_use('Agg')  # noqa: E402
@@ -70,10 +71,11 @@ class Mock(object):
 
 
 class Recorder(object):
-    def __init__(self, dirname, nodeid):
+    def __init__(self, dirname, nodeid, filename_drop=None):
         self.dirname = dirname
         self.nodeid = nodeid
         self.saved = None
+        self.filename_drop = [] if filename_drop is None else filename_drop
 
     @property
     def record(self):
@@ -90,7 +92,19 @@ class Recorder(object):
         self._dirname = _dirname
 
     def get_filename(self, ext=""):
-        return "%s.%s" % (self.nodeid, ext)
+        # Flatten filestructure (replace folders with dots in filename).
+        # The nodeid should only contain /, but to be safe we also replace \\
+        filename = self.nodeid.replace('/', '.').replace('\\', '.')
+
+        # Drop parts of filename matching the given regexs
+        for pattern in self.filename_drop:
+            match = re.search(pattern, filename)
+            while match is not None:
+                span = match.span()
+                filename = filename[:span[0]] + filename[span[1]:]
+                match = re.search(pattern, filename)
+
+        return "%s.%s" % (filename, ext)
 
     def __enter__(self):
         raise NotImplementedError()
@@ -147,13 +161,19 @@ def plt(request):
     If you need to override the default filename, set `plt.saveas` to
     the desired filename.
     """
+    # Read plt_filename_drop from .ini config file
+    filename_drop = request.config.inicfg.get("plt_filename_drop", "")
+    filename_drop = [s for s in filename_drop.split('\n') if len(s) > 0]
 
+    # Read dirname
     dirname = request.config.getvalue("plots")
     if not is_string(dirname) and dirname:
         dirname = "plots"
     elif not dirname:
         dirname = None
-    plotter = Plotter(dirname, request.node.nodeid)
+
+    plotter = Plotter(
+        dirname, request.node.nodeid, filename_drop=filename_drop)
 
     def _finalize():
         plotter.__exit__(None, None, None)

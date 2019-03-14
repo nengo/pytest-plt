@@ -63,14 +63,24 @@ def saved_plots(result):
     return saved
 
 
-def test_plt_no_plots(testdir):
-    testdir.mkpydir("package")
-    testdir.mkpydir("package/tests")
+def run_test_plt(testdir, folders, run_args=("--plots",), ini_source=None):
+    for i in range(1, len(folders)+1):
+        testdir.mkpydir('/'.join(folders[:i]))
+
     file_path = testdir.copy_example("test_plt.py")
-    file_path.rename("package/tests/test_plt.py")
+    file_path.rename('/'.join(folders + ["test_plt.py"]))
+
+    if ini_source is not None:
+        testdir.makeini(ini_source)
+
+    result = testdir.runpytest("-v", *run_args)
+    return result
+
+
+def test_plt_no_plots(testdir):
+    result = run_test_plt(testdir, ["package", "tests"], run_args=[])
 
     # All tests should pass
-    result = testdir.runpytest("-v")
     n_passed = assert_all_passed(result)
     assert n_passed > 0
 
@@ -82,13 +92,9 @@ def test_plt_no_plots(testdir):
 
 
 def test_plt_plots(testdir):
-    testdir.mkpydir("package")
-    testdir.mkpydir("package/tests")
-    file_path = testdir.copy_example("test_plt.py")
-    file_path.rename("package/tests/test_plt.py")
+    result = run_test_plt(testdir, ["package", "tests"])
 
     # All tests should pass
-    result = testdir.runpytest("-v", "--plots")
     n_passed = assert_all_passed(result)
 
     # All plots should be created
@@ -102,22 +108,16 @@ def test_plt_plots(testdir):
 @pytest.mark.parametrize('drop_len', [1, 3])
 def test_filename_drop_prefix(testdir, drop_len):
     parts = ["package", "folder", "tests"]
+
     drop_parts = parts[:drop_len]
-
-    for i in range(1, len(parts)+1):
-        testdir.mkpydir('/'.join(parts[:i]))
-
-    file_path = testdir.copy_example("test_plt.py")
-    file_path.rename('/'.join(parts + ["test_plt.py"]))
-
     ini_source = r"""
     [pytest]
     plt_filename_drop =
         """ + "".join(p + r"\." for p in drop_parts)
-    testdir.makeini(ini_source)
+
+    result = run_test_plt(testdir, parts, ini_source=ini_source)
 
     # All tests should pass
-    result = testdir.runpytest("-v", "--plots")
     n_passed = assert_all_passed(result)
 
     # All plots should be created

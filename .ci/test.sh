@@ -12,6 +12,7 @@ COMMAND=$1
 
 if [[ "$COMMAND" == "install" ]]; then
     exe conda install --quiet numpy matplotlib
+    exe pip install "$PYTEST"
     exe pip install -e ".[tests]"
 elif [[ "$COMMAND" == "script" ]]; then
     exe coverage run -m pytest pytest_plt -v --durations 20 --color=yes

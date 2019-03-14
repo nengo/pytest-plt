@@ -6,12 +6,13 @@ notifications:
 env:
   global:
     - PYTHON="3.7"
+    - PYTEST="pytest"
     - MODE="test"
 
 matrix:
   include:
     - env: PYTHON="2.7"
-    - env: PYTHON="3.4"
+    - env: PYTHON="3.4" PYTEST="pytest<4"
     - env: PYTHON="3.5"
     - env: PYTHON="3.6"
     - env: PYTHON="3.7"

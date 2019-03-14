@@ -146,3 +146,27 @@ def test_plots_dir(testdir):
     for _, plot in saved:
         assert plot.startswith("myplotdir/package.tests.")
         assert os.path.exists(plot)
+
+
+def test_default_dir(testdir):
+    ini_source = r"""
+    [pytest]
+    plt_dirname = mydefaultdir
+    """
+    # test with default dir
+    result = run_test_plt(testdir, ["package", "tests"], ini_source=ini_source)
+    n_passed = assert_all_passed(result)
+    saved = saved_plots(result)
+    assert 0 < len(saved) <= n_passed
+    for _, plot in saved:
+        assert plot.startswith("mydefaultdir/package.tests.")
+        assert os.path.exists(plot)
+
+    # test with default dir overwritten by command line
+    result = testdir.runpytest("-v", "--plots", "myoverridedir")
+    n_passed = assert_all_passed(result)
+    saved = saved_plots(result)
+    assert 0 < len(saved) <= n_passed
+    for _, plot in saved:
+        assert plot.startswith("myoverridedir/package.tests.")
+        assert os.path.exists(plot)

@@ -169,12 +169,15 @@ def plt(request):
     filename_drop = filename_drop.split('\n')
     filename_drop = [s for s in filename_drop if len(s) > 0]
 
+    # read plt_dir from .ini config file
+    default_dirname = request.config.inicfg.get("plt_dirname", "plots")
+
     # read dirname
     dirname = request.config.getvalue("plots")
     if not is_string(dirname) and dirname:
-        dirname = "plots"
+        dirname = default_dirname
     elif not dirname:
-        dirname = None
+        dirname = None  # --plots argument not provided, so disable plots
 
     plotter = Plotter(dirname, request.node.nodeid,
                       filename_drop=filename_drop)

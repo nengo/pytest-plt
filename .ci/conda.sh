@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-set -e -v  # exit immediately on error, and print each line as it executes
+if [[ ! -e .ci/common.sh || ! -e pytest_plt ]]; then
+    echo "Run this script from the root directory of this repository"
+    exit 1
+fi
+source .ci/common.sh
 
 # This script sets up the conda environment for all the other scripts
 
@@ -8,19 +12,18 @@ COMMAND=$1
 MINICONDA="http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh"
 
 if [[ "$COMMAND" == "install" ]]; then
-    wget "$MINICONDA" --quiet -O miniconda.sh
-    bash miniconda.sh -b -p "$HOME/miniconda"
+    exe wget "$MINICONDA" --quiet -O miniconda.sh
+    exe bash miniconda.sh -b -p "$HOME/miniconda"
     export PATH="$HOME/miniconda/bin:$PATH"
-    conda config --set always_yes yes --set changeps1 no
-    conda update -q conda
-    conda info -a
-    conda create -q -n test python="$PYTHON" pip
-    source activate test
-    pip install --upgrade pip
+    exe conda config --set always_yes yes --set changeps1 no
+    exe conda update -q conda
+    exe conda info -a
+    exe conda create -q -n test python="$PYTHON" pip
+    exe source activate test
+    export PIP_UPGRADE=true  # always upgrade packages to latest version
+    exe pip install pip
 elif [[ -z "$COMMAND" ]]; then
     echo "$NAME requires a command like 'install' or 'script'"
 else
     echo "$NAME does not define $COMMAND"
 fi
-
-set +e +v  # reset options in case this is sourced

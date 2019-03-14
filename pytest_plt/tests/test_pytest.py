@@ -131,3 +131,18 @@ def test_filename_drop_prefix(testdir, drop_len):
         test_parts = test_parts[drop_len:]
         assert plot == "plots/" + '.'.join(test_parts) + '.pdf'
         assert os.path.exists(plot)
+
+
+def test_plots_dir(testdir):
+    result = run_test_plt(testdir, ["package", "tests"],
+                          run_args=["--plots", "myplotdir"])
+
+    # All tests should pass
+    n_passed = assert_all_passed(result)
+
+    # All plots should be created
+    saved = saved_plots(result)
+    assert 0 < len(saved) <= n_passed
+    for _, plot in saved:
+        assert plot.startswith("myplotdir/package.tests.")
+        assert os.path.exists(plot)

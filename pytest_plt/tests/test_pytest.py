@@ -167,3 +167,17 @@ def test_filename_drop_within(testdir):
         assert plot.startswith("plots/tests.test_")
         colon_ix = plot.index("::")
         assert not plot[colon_ix:].startswith("::test_")
+
+
+def test_plots_dir(testdir):
+    copy_all_tests(testdir, "package/tests")
+    result = testdir.runpytest("-v", "--plots", "myplotdir")
+    # All tests should pass
+    n_passed = assert_all_passed(result)
+
+    # All plots should be created
+    saved = saved_plots(result)
+    assert 0 < len(saved) <= n_passed
+    for _, plot in saved:
+        assert plot.startswith("myplotdir/package.tests.")
+        assert os.path.exists(plot)

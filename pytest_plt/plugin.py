@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import errno
 import os
 
@@ -34,7 +36,7 @@ def pytest_report_teststatus(report):
         for key, val in report.user_properties:
             if key == "plt_saved":
                 outcome.force_result(
-                    (category, shortletter, "%s\n└─ Saved %r" % (word, val))
+                    (category, shortletter, u"%s\n└─ Saved %r" % (word, val))
                 )
             break
 

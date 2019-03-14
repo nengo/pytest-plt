@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """The main test file that should be run on a regular basis.
 
 The goal of this file is to test pytest_plt internals and run all other
@@ -54,7 +56,7 @@ def saved_plots(result):
     """Get a list of all tests with saved plots."""
     saved = []
     for i, line in enumerate(result.outlines):
-        if line.startswith("└"):
+        if line.startswith(u"└"):
             test = result.outlines[i - 1].split(" ")[0]
             plot = line.split("'")[1]
             saved.append((test, plot))

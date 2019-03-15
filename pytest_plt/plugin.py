@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import errno
+import inspect
 import os
 import re
 
@@ -151,6 +152,47 @@ class Plotter(Recorder):
         super(Plotter, self).save(path)
 
 
+def default_dirname_formatter(request, dirname):
+    return dirname
+
+
+plt_dirname_formatter = default_dirname_formatter
+
+
+def set_plt_dirname_formatter(dirname_formatter):
+    """Configure plot directory names with a custom Python function.
+
+    This allows you to set a callable directory name formatter that will
+    customize the plot directory for individual tests. For example, you can
+    have the directory name depend on fixtures used by the test, to have tests
+    grouped by fixture.
+
+    Parameters
+    ----------
+    dirname_formatter : callable
+        A callable function/class that takes two arguments: ``request`` and
+        ``dirname``, and returns a new directory name as a string.
+
+        ``request`` is a ``pytest`` fixture that provides information about the
+        test function: https://docs.pytest.org/en/latest/reference.html#request
+
+        ``dirname`` is the current proposed directory name as a string, based
+        on the configuration files or command line argument. The formatter
+        should modify or add to this directory name, as appropriate.
+    """
+    global plt_dirname_formatter
+
+    if not callable(dirname_formatter):
+        raise ValueError("dirname_formatter must be a callable object")
+
+    argspec = inspect.getfullargspec(dirname_formatter)
+    if len(argspec.args) != 2:
+        raise ValueError("dirname_formatter must take two arguments: the "
+                         "`request` fixture and a current `dirname` string")
+
+    plt_dirname_formatter = dirname_formatter
+
+
 @pytest.fixture
 def plt(request):
     """A pyplot-compatible plotting interface.
@@ -170,14 +212,19 @@ def plt(request):
     filename_drop = [s for s in filename_drop if len(s) > 0]
 
     # read plt_dir from .ini config file
-    default_dirname = request.config.inicfg.get("plt_dirname", "plots")
+    ini_dirname = request.config.inicfg.get("plt_dirname", "plots")
 
     # read dirname
     dirname = request.config.getvalue("plots")
     if not is_string(dirname) and dirname:
-        dirname = default_dirname
+        # no dirname provided with --plots argument, so use default
+        dirname = ini_dirname
     elif not dirname:
-        dirname = None  # --plots argument not provided, so disable plots
+        # --plots argument not provided, so disable plots
+        dirname = None
+
+    if dirname is not None:
+        dirname = plt_dirname_formatter(request, dirname)
 
     plotter = Plotter(dirname, request.node.nodeid,
                       filename_drop=filename_drop)

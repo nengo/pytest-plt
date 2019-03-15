@@ -63,10 +63,9 @@ htmlhelp_basename = project
 html_last_updated_fmt = ''  # Suppress 'Last updated on:' timestamp
 html_show_sphinx = False
 html_favicon = os.path.join("_static", "favicon.ico")
-html_sidebars = {"**": ["sidebar.html"]}
+html_sidebars = {"**": []}
 html_theme_options = {
-    "sidebar_logo_width": 200,
-    "nengo_logo": "general-full-light.svg",
+    "analytics_id": "UA-41658423-2",
 }
 
 # -- Options for LaTeX output -------------------------------------------------

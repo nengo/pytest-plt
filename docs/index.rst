@@ -1,21 +1,7 @@
-**********
-pytest_plt
-**********
+.. include:: ../README.rst
+   :end-before: See the full
 
-``pytest-plt`` provides fixtures for
-quickly creating Matplotlib plots in your tests.
-
-Installation
-============
-
-Usage
-=====
-
-Configuration
+API reference
 =============
 
-
-.. toctree::
-   :maxdepth: 2
-
-   api
+.. autofunction:: pytest_plt.plugin.plt

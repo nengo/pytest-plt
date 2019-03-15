@@ -152,14 +152,16 @@ class Plotter(Recorder):
 def plt(request):
     """A pyplot-compatible plotting interface.
 
-    Please use this if your test creates plots.
+    Use this to create plots in your tests using the ``matplotlib.pyplot``
+    interface.
 
     This will keep saved plots organized in a simulator-specific folder,
-    with an automatically generated name. savefig() and close() will
+    with an automatically generated name. ``savefig()`` and ``close()`` will
     automatically be called when the test function completes.
 
-    If you need to override the default filename, set `plt.saveas` to
-    the desired filename.
+    If you need to override the default filename, set ``plt.saveas`` to
+    the desired filename. Be sure to include a file extension, as it will
+    be used as is.
     """
     # Read plt_filename_drop from .ini config file
     filename_drop = request.config.inicfg.get("plt_filename_drop", "")

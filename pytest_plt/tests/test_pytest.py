@@ -104,8 +104,8 @@ def test_plt_plots(testdir):
     saved = saved_plots(result)
     assert 0 < len(saved) <= n_passed
     for _, plot in saved:
-        assert plot.startswith("plots/package.tests.")
         assert os.path.exists(plot)
+        assert plot.startswith("plots/package.tests.")
 
 
 @pytest.mark.parametrize(
@@ -138,7 +138,8 @@ def test_filename_drop_prefix(testdir, prefix):
             assert prefix_part == test_part
 
         test_parts = test_parts[len(prefix_parts):]
-        assert plot == "plots/%s.pdf" % '.'.join(test_parts)
+        assert (plot == "plots/%s.pdf" % '.'.join(test_parts)
+                or plot == "plots/%s.png" % '.'.join(test_parts))
         assert os.path.exists(plot)
 
 

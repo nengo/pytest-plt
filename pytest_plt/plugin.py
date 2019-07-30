@@ -10,7 +10,7 @@ mpl_use("Agg")  # noqa: E402
 from matplotlib import pyplot as mpl_plt
 import pytest
 
-from .compat import is_string
+from pytest_plt.compat import is_string
 
 
 def mkdir_p(path):
@@ -42,12 +42,12 @@ def pytest_report_teststatus(report):
         for key, val in report.user_properties:
             if key == "plt_saved":
                 outcome.force_result(
-                    (category, shortletter, u"%s\n└─ Saved %r" % (word, val))
+                    (category, shortletter, "%s\n└─ Saved %r" % (word, val))
                 )
             break
 
 
-class Mock(object):
+class Mock:
     def __init__(self, *args, **kwargs):
         pass
 
@@ -75,7 +75,7 @@ class Mock(object):
             return Mock()
 
 
-class Recorder(object):
+class Recorder:
     def __init__(self, dirname, nodeid, filename_drop=None):
         self.dirname = dirname
         self.nodeid = nodeid

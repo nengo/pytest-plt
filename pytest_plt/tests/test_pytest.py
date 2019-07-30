@@ -74,7 +74,7 @@ def saved_plots(result):
     """Get a list of all tests with saved plots."""
     saved = []
     for i, line in enumerate(result.outlines):
-        if line.startswith(u"└"):
+        if line.startswith("└"):
             test = result.outlines[i - 1].split(" ")[0]
             plot = line.split("'")[1]
             saved.append((test, plot))

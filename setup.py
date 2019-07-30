@@ -62,6 +62,7 @@ setup(
         "tests": tests_require,
     },
     tests_require=tests_require,
+    python_requires=">=3.5",
     entry_points={
         "pytest11": ["plt = pytest_plt.plugin"],
     },
@@ -70,8 +71,7 @@ setup(
         "Development Status :: 5 - Production/Stable",
         "Framework :: Pytest",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",

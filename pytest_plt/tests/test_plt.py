@@ -33,7 +33,7 @@ def test_simple_plot(plt):
 
 def test_bbox_extra_artists(plt):
     plt.plot(np.linspace(0, 1, 20), np.linspace(0, 2, 20), label="line")
-    legend = plt.legend(loc='upper left', bbox_to_anchor=(1., 1.))
+    legend = plt.legend(loc="upper left", bbox_to_anchor=(1.0, 1.0))
     plt.bbox_extra_artists = (legend,)
 
 

@@ -5,7 +5,8 @@ import os
 import re
 
 from matplotlib import use as mpl_use
-mpl_use('Agg')  # noqa: E402
+
+mpl_use("Agg")  # noqa: E402
 from matplotlib import pyplot as mpl_plt
 import pytest
 
@@ -24,8 +25,12 @@ def mkdir_p(path):
 
 def pytest_addoption(parser):
     parser.addoption(
-        '--plots', nargs='?', default=False, const=True,
-        help='Save plots (can optionally specify a directory for plots).')
+        "--plots",
+        nargs="?",
+        default=False,
+        const=True,
+        help="Save plots (can optionally specify a directory for plots).",
+    )
 
 
 @pytest.hookimpl(hookwrapper=True)
@@ -60,8 +65,8 @@ class Mock(object):
 
     @classmethod
     def __getattr__(cls, name):
-        if name in ('__file__', '__path__'):
-            return '/dev/null'
+        if name in ("__file__", "__path__"):
+            return "/dev/null"
         elif name[0] == name[0].upper():
             mockType = type(name, (), {})
             mockType.__module__ = __name__
@@ -94,14 +99,14 @@ class Recorder(object):
     def get_filename(self, ext=""):
         # Flatten filestructure (replace folders with dots in filename).
         # The nodeid should only contain /, but to be safe we also replace \\
-        filename = self.nodeid.replace('/', '.').replace('\\', '.')
+        filename = self.nodeid.replace("/", ".").replace("\\", ".")
 
         # Drop parts of filename matching the given regexs
         for pattern in self.filename_drop:
             match = re.search(pattern, filename)
             while match is not None:
                 span = match.span()
-                filename = filename[:span[0]] + filename[span[1]:]
+                filename = filename[: span[0]] + filename[span[1] :]
                 match = re.search(pattern, filename)
 
         return "%s.%s" % (filename, ext)
@@ -122,14 +127,14 @@ class Plotter(Recorder):
             self.plt = mpl_plt
         else:
             self.plt = Mock()
-        self.plt.saveas = self.get_filename(ext='pdf')
+        self.plt.saveas = self.get_filename(ext="pdf")
         return self.plt
 
     def __exit__(self, type, value, traceback):
         if self.record:
             if self.plt.saveas is None:
                 del self.plt.saveas
-                self.plt.close('all')
+                self.plt.close("all")
                 return
 
             if len(self.plt.gcf().get_axes()) > 0:
@@ -137,13 +142,13 @@ class Plotter(Recorder):
                 self.plt.tight_layout()
 
             self.save(os.path.join(self.dirname, self.plt.saveas))
-            self.plt.close('all')
+            self.plt.close("all")
 
     def save(self, path):
         mkdir_p(os.path.dirname(path))
-        savefig_kw = {'bbox_inches': 'tight'}
-        if hasattr(self.plt, 'bbox_extra_artists'):
-            savefig_kw['bbox_extra_artists'] = self.plt.bbox_extra_artists
+        savefig_kw = {"bbox_inches": "tight"}
+        if hasattr(self.plt, "bbox_extra_artists"):
+            savefig_kw["bbox_extra_artists"] = self.plt.bbox_extra_artists
         self.plt.savefig(path, **savefig_kw)
         super(Plotter, self).save(path)
 
@@ -165,7 +170,7 @@ def plt(request):
     """
     # Read plt_filename_drop from .ini config file
     filename_drop = request.config.inicfg.get("plt_filename_drop", "")
-    filename_drop = [s for s in filename_drop.split('\n') if len(s) > 0]
+    filename_drop = [s for s in filename_drop.split("\n") if len(s) > 0]
 
     # Read plt_dirname from .ini config file
     default_dirname = request.config.inicfg.get("plt_dirname", "plots")
@@ -177,8 +182,7 @@ def plt(request):
     elif not dirname:
         dirname = None  # --plots argument not provided, so disable plots
 
-    plotter = Plotter(
-        dirname, request.node.nodeid, filename_drop=filename_drop)
+    plotter = Plotter(dirname, request.node.nodeid, filename_drop=filename_drop)
 
     def _finalize():
         plotter.__exit__(None, None, None)

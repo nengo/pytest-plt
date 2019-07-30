@@ -1,0 +1,86 @@
+project_name: pytest-plt
+pkg_name: pytest_plt
+repo_name: nengo/pytest-plt
+description: Fixtures for quickly making Matplotlib plots in tests
+
+copyright_start: 2018
+
+license_rst:
+  type: mit
+
+contributing_rst: {}
+
+contributors_rst: {}
+
+manifest_in: {}
+
+setup_py:
+  license: MIT license
+  python_requires: ">=3.5"
+  install_req:
+    - matplotlib
+    - pytest
+  docs_req:
+    - nengo_sphinx_theme>=1.0
+    - sphinx
+  entry_points:
+    pytest11:
+      - "plt = pytest_plt.plugin"
+  classifiers:
+    - "Development Status :: 5 - Production/Stable"
+    - "Framework :: Pytest"
+    - "License :: OSI Approved :: MIT License"
+    - "Programming Language :: Python :: 3 :: Only"
+    - "Programming Language :: Python :: 3.5"
+    - "Programming Language :: Python :: 3.6"
+    - "Programming Language :: Python :: 3.7"
+
+setup_cfg:
+  pytest:
+    addopts: []
+    filterwarnings:
+      - ignore:testdir.copy_example is an experimental api
+    plt_filename_drop:
+      - "^pytest_plt\\.tests\\."
+    pytester_example_dir: pytest_plt/tests
+    python_files: test_pytest.py
+  pylint:
+    disable:
+      - missing-docstring
+      - wrong-import-position
+
+docs_conf_py:
+  analytics_id: UA-41658423-2
+  nengo_logo: general-square-light.svg
+
+travis_yml:
+  python: 3.6
+  jobs:
+    - script: static
+    - script: test-coverage
+    - script: test
+      python: 3.5
+      cache: false  # disable the cache for one build to make sure that works
+    - script: test
+      python: 3.7
+      dist: xenial  # currently only xenial has python 3.7
+    - script: docs
+  pypi_user: tbekolay
+  deploy_dists:
+    - sdist
+    - bdist_wheel
+
+ci_scripts:
+  - template: static
+  - template: test
+  - template: test
+    output_name: test-coverage
+    coverage: true
+  - template: docs
+  - template: deploy
+
+codecov_yml: {}
+
+pre_commit_config_yaml: {}
+
+pyproject_toml: {}

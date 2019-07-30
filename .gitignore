@@ -23,3 +23,5 @@ htmlcov
 .idea
 .pytest_cache/
 plots/
+
+.ci/*.sh

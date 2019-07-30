@@ -1,0 +1,7 @@
+{% extends "templates/setup.cfg.template" %}
+
+{% block pytest %}
+{{ super() }}
+pytester_example_dir = {{ pytest.pytester_example_dir }}
+python_files = {{ pytest.python_files }}
+{% endblock %}

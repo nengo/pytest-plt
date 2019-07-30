@@ -138,10 +138,8 @@ def test_filename_drop_prefix(testdir, prefix):
         for prefix_part, test_part in zip(prefix_parts, test_parts):
             assert prefix_part == test_part
 
-        test_parts = test_parts[len(prefix_parts) :]
-        assert plot == "plots/%s.pdf" % ".".join(
-            test_parts
-        ) or plot == "plots/%s.png" % ".".join(test_parts)
+        plot_name = ".".join(test_parts[len(prefix_parts) :])
+        assert plot in ["plots/%s.%s" % (plot_name, ext) for ext in ("pdf", "png")]
         assert os.path.exists(plot)
 
 

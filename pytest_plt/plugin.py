@@ -10,8 +10,6 @@ mpl_use("Agg")  # noqa: E402
 from matplotlib import pyplot as mpl_plt
 import pytest
 
-from pytest_plt.compat import is_string
-
 
 def mkdir_p(path):
     try:
@@ -177,7 +175,7 @@ def plt(request):
 
     # Read dirname from command line, which takes precedence over .ini config
     dirname = request.config.getvalue("plots")
-    if not is_string(dirname) and dirname:
+    if not isinstance(dirname, str) and dirname:
         dirname = default_dirname
     elif not dirname:
         dirname = None  # --plots argument not provided, so disable plots

@@ -77,6 +77,8 @@ ci_scripts:
     output_name: test-coverage
     coverage: true
   - template: docs
+    pip_install:
+      - "pytest>=4"
   - template: deploy
 
 codecov_yml: {}

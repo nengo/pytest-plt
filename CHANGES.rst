@@ -22,7 +22,15 @@ Release History
 1.0.1 (unreleased)
 ==================
 
+**Fixed**
 
+- We now use Windows-compatible plot filenames by default.
+  Colons in plot filenames are replaced with hyphens.
+  Filenames specified through ``plt.saveas`` are not modified.
+  (`#17`_, `#21`_)
+
+.. _#17: https://github.com/nengo/pytest-plt/issues/17
+.. _#21: https://github.com/nengo/pytest-plt/pull/21
 
 1.0.0 (August 9, 2019)
 ======================

@@ -11,7 +11,7 @@ file will be run due to configuration in ``setup.cfg``. However, other
 test files can be run manually by passing them to ``pytest``.
 """
 
-import os
+from pathlib import Path
 
 import pytest
 from pytest_plt.plugin import Mock
@@ -48,7 +48,7 @@ def assert_all_passed(result):
     """
     outcomes = result.parseoutcomes()
     for outcome in outcomes:
-        if outcome not in ("passed", "seconds"):
+        if outcome not in ("passed", "seconds", "warnings"):
             assert outcomes[outcome] == 0
     return outcomes.get("passed", 0)
 
@@ -62,12 +62,12 @@ def copy_all_tests(testdir, path):
     # NB: If we add additional directories, this needs to change
     tests = [
         p
-        for p in os.listdir(os.path.dirname(__file__))
-        if p.startswith("test_") and p != "test_pytest.py"
+        for p in Path(__file__).parent.iterdir()
+        if p.name.startswith("test_") and p.name != "test_pytest.py"
     ]
     for test in tests:
-        test_path = testdir.copy_example(test)
-        test_path.rename("%s/%s" % (path, test))
+        test_path = testdir.copy_example(test.name)
+        test_path.rename("%s/%s" % (path, test.name))
 
 
 def saved_plots(result):
@@ -93,7 +93,7 @@ def test_plt_no_plots(testdir):
     saved = saved_plots(result)
     assert len(saved) == 0
     path = str(testdir.tmpdir)
-    assert not os.path.exists(os.path.join(path, "plots"))
+    assert not Path(path, "plots").exists()
 
 
 def test_plt_plots(testdir):
@@ -107,8 +107,10 @@ def test_plt_plots(testdir):
     saved = saved_plots(result)
     assert 0 < len(saved) <= n_passed
     for _, plot in saved:
-        assert os.path.exists(plot)
-        assert plot.startswith("plots/package.tests.")
+        p = Path(plot)
+        assert p.exists()
+        assert p.parts[0] == "plots"
+        assert p.name.startswith("package.tests.")
 
 
 @pytest.mark.parametrize("prefix", ["package/", "package/folder/tests/"])
@@ -138,9 +140,12 @@ def test_filename_drop_prefix(testdir, prefix):
         for prefix_part, test_part in zip(prefix_parts, test_parts):
             assert prefix_part == test_part
 
-        plot_name = ".".join(test_parts[len(prefix_parts) :])
-        assert plot in ["plots/%s.%s" % (plot_name, ext) for ext in ("pdf", "png")]
-        assert os.path.exists(plot)
+        plot_name = ".".join(test_parts[len(prefix_parts) :]).replace(":", "-")
+        path = Path(plot)
+        assert path.parts[0] == "plots"
+        assert path.stem == plot_name
+        assert path.suffix in [".pdf", ".png"]
+        assert path.exists()
 
 
 def test_filename_drop_within(testdir):
@@ -156,7 +161,7 @@ def test_filename_drop_within(testdir):
                 "plt_filename_drop =",
                 r"    package\.",
                 # Matches the `test_` of the function name only
-                r"    (?<=::)test_",
+                r"    (?<=--)test_",
             ]
         )
     )
@@ -169,9 +174,10 @@ def test_filename_drop_within(testdir):
     saved = saved_plots(result)
     assert 0 < len(saved) <= n_passed
     for _, plot in saved:
-        assert plot.startswith("plots/tests.test_")
-        colon_ix = plot.index("::")
-        assert not plot[colon_ix:].startswith("::test_")
+        assert Path(plot).parts[0] == "plots"
+        assert Path(plot).name.startswith("tests.test_")
+        colon_ix = plot.index("--")
+        assert not plot[colon_ix:].startswith("--test_")
 
 
 def test_plots_dir(testdir):
@@ -184,8 +190,10 @@ def test_plots_dir(testdir):
     saved = saved_plots(result)
     assert 0 < len(saved) <= n_passed
     for _, plot in saved:
-        assert plot.startswith("myplotdir/package.tests.")
-        assert os.path.exists(plot)
+        path = Path(plot)
+        assert path.parts[0] == "myplotdir"
+        assert path.name.startswith("package.tests.")
+        assert path.exists()
 
 
 def test_default_dir(testdir):
@@ -197,8 +205,10 @@ def test_default_dir(testdir):
     saved = saved_plots(result)
     assert 0 < len(saved) <= n_passed
     for _, plot in saved:
-        assert plot.startswith("mydefaultdir/package.tests.")
-        assert os.path.exists(plot)
+        path = Path(plot)
+        assert path.parts[0] == "mydefaultdir"
+        assert path.name.startswith("package.tests.")
+        assert path.exists()
 
     # test with default dir overwritten by command line
     result = testdir.runpytest("-v", "--plots", "myoverridedir")
@@ -206,5 +216,7 @@ def test_default_dir(testdir):
     saved = saved_plots(result)
     assert 0 < len(saved) <= n_passed
     for _, plot in saved:
-        assert plot.startswith("myoverridedir/package.tests.")
-        assert os.path.exists(plot)
+        path = Path(plot)
+        assert path.parts[0] == "myoverridedir"
+        assert path.name.startswith("package.tests.")
+        assert path.exists()

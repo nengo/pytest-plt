@@ -90,14 +90,17 @@ class Recorder:
 
     @dirname.setter
     def dirname(self, _dirname):
-        if _dirname is not None and not os.path.exists(_dirname):
-            os.makedirs(_dirname)
+        if _dirname is not None:
+            _dirname = os.path.normpath(_dirname)
+            if not os.path.exists(_dirname):
+                os.makedirs(_dirname)
         self._dirname = _dirname
 
     def get_filename(self, ext=""):
         # Flatten filestructure (replace folders with dots in filename).
-        # The nodeid should only contain /, but to be safe we also replace \\
-        filename = self.nodeid.replace("/", ".").replace("\\", ".")
+        # The nodeid should only contain /, but to be safe we also replace \\.
+        # We also replace : with - because Windows does not allow colons in filenames.
+        filename = self.nodeid.replace("/", ".").replace("\\", ".").replace(":", "-")
 
         # Drop parts of filename matching the given regexs
         for pattern in self.filename_drop:

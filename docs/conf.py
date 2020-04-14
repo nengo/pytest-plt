@@ -9,6 +9,7 @@ import pytest_plt
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx.ext.doctest",
     "sphinx.ext.githubpages",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
@@ -16,6 +17,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "nbsphinx",
     "nengo_sphinx_theme",
+    "nengo_sphinx_theme.ext.backoff",
     "numpydoc",
 ]
 
@@ -23,6 +25,11 @@ extensions = [
 autoclass_content = "both"  # class and __init__ docstrings are concatenated
 autodoc_default_options = {"members": None}
 autodoc_member_order = "bysource"  # default is alphabetical
+
+# -- sphinx.ext.doctest
+doctest_global_setup = """
+import pytest_plt
+"""
 
 # -- sphinx.ext.intersphinx
 intersphinx_mapping = {
@@ -42,7 +49,10 @@ nbsphinx_timeout = -1
 
 # -- sphinx
 nitpicky = True
-exclude_patterns = ["_build", "**/.ipynb_checkpoints"]
+exclude_patterns = [
+    "_build",
+    "**/.ipynb_checkpoints",
+]
 linkcheck_timeout = 30
 source_suffix = ".rst"
 source_encoding = "utf-8"
@@ -51,10 +61,11 @@ linkcheck_ignore = [r"http://localhost:\d+"]
 linkcheck_anchors = True
 default_role = "py:obj"
 pygments_style = "sphinx"
+user_agent = "pytest_plt"
 
 project = "pytest-plt"
 authors = "Applied Brain Research"
-copyright = "2018-2019 Applied Brain Research"
+copyright = "2018-2020 Applied Brain Research"
 version = ".".join(pytest_plt.__version__.split(".")[:2])  # Short X.Y version
 release = pytest_plt.__version__  # Full version, with tags
 

@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring
+
 """Test the plt fixture."""
 
 import numpy as np

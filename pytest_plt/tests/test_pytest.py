@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=missing-docstring
 
 """The main test file that should be run on a regular basis.
 

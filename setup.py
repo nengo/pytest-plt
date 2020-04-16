@@ -34,7 +34,9 @@ install_req = [
     "pytest",
 ]
 docs_req = [
-    "nengo_sphinx_theme>=1.0",
+    "nbsphinx>=0.6.0",
+    "nengo_sphinx_theme>1.2.2",
+    "numpydoc>=0.9.2",
     "sphinx",
 ]
 optional_req = []

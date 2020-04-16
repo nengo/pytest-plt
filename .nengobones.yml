@@ -54,6 +54,7 @@ setup_cfg:
 docs_conf_py:
   analytics_id: UA-41658423-2
   nengo_logo: general-square-light.svg
+  one_page: True
 
 travis_yml:
   python: 3.6

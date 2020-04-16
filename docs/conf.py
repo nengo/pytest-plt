@@ -82,4 +82,5 @@ html_theme_options = {
     "nengo_logo": "general-square-light.svg",
     "nengo_logo_color": "#a8acaf",
     "analytics_id": "UA-41658423-2",
+    "one_page": True,
 }

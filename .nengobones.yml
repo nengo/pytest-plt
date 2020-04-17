@@ -58,6 +58,10 @@ docs_conf_py:
 
 travis_yml:
   python: 3.6
+  global_vars:
+    COV_CORE_SOURCE: pytest_plt
+    COV_CORE_CONFIG: .coveragerc
+    COV_CORE_DATAFILE: .coverage.eager
   jobs:
     - script: static
     - script: test-coverage

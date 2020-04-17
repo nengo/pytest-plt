@@ -22,6 +22,9 @@ env:
     - SCRIPT="test"
     - TEST_ARGS=""
     - BRANCH_NAME="${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}"
+    - COV_CORE_SOURCE="pytest_plt"
+    - COV_CORE_CONFIG=".coveragerc"
+    - COV_CORE_DATAFILE=".coverage.eager"
 
 jobs:
   include:

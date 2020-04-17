@@ -72,6 +72,15 @@ travis_yml:
   deploy_dists:
     - sdist
     - bdist_wheel
+  slack_notifications: "HdSBp1MsF1Btg38YM0I3/YJHiJVwKxH2D3VllOc2kSPMesDxXYSKWh7ePoGxcD\
+    0GfX9diRFOEM8assc5gMv6T8ySGpOR5s895mnswv6v6VaZCqjoIxB56D+EC9tt+SpbKuwGJOgSKKki2Bye\
+    5IMVDoEb5HL9+YBOSMCW6jOz95fLyu054OBGFhf/s2Wlw7CBktL3mlxs7tJNvXkr7KIAIFYv++IwzNbVOT\
+    qOxhOrR7h2FlRri1GfkWO2MHDiiwNQy0mfBPHr8jKgHvsGS5yE/LM67WiwSHouBvB/7+iel7HpMmibZwqR\
+    jnh6JPZ+1Y7y9NJHdPcbBTJBLTBvTnN1w06F9qxvoqNOjXAZcmewB0AMXivgkEiVScEyqbT+FwWp7Erl8m\
+    4pai50FRS8Hi5H6khmsYxlDovkM4hoIqCjUmHyO2al4S8EjI7EwUEUT5ufelRuA+oLCJcHFO8KyMYCR4XI\
+    uJJM4g3h5EhPgGCRVNUZzKFotlsCLjT3PbUWCXsWM6fSR/QqlURlAFVRHlVXYEM9EaDBWhFyBJEHriDFOR\
+    zkKmxYndRoRFph5q38UHb9ta7QYsHzHtB7X0Oz10TSmW6opP3bbFac2eLmC1ys5BiM7YZ3d8X46IK1pkUp\
+    Im84eh8sSziatbc57q/qJnT8WGmJ8CthOom2xxzZJhvpALw="
 
 ci_scripts:
   - template: static

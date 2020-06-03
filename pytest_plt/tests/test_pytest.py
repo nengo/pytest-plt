@@ -147,7 +147,7 @@ def test_filename_drop_prefix(testdir, prefix):
         path = Path(plot)
         assert path.parts[0] == "plots"
         assert path.stem == plot_name
-        assert path.suffix in [".pdf", ".png"]
+        assert path.suffix in [".pdf", ".png", ".pickle"]
         assert path.exists()
 
 

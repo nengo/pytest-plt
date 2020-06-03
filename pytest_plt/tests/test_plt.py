@@ -42,3 +42,8 @@ def test_bbox_extra_artists(plt):
 def test_saveas(plt):
     assert plt.saveas.endswith("saveas.pdf")
     plt.saveas = None
+
+
+def test_saveas_pickle(plt):
+    plt.subplots(2, 3)  # The pickled figure will contain six axes.
+    plt.saveas = "%s.pickle" % (plt.saveas[:-4],)

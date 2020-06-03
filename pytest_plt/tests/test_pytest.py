@@ -12,6 +12,8 @@ file will be run due to configuration in ``setup.cfg``. However, other
 test files can be run manually by passing them to ``pytest``.
 """
 
+import pickle
+import matplotlib.pyplot as plt
 from pathlib import Path
 
 import pytest
@@ -49,7 +51,7 @@ def assert_all_passed(result):
     """
     outcomes = result.parseoutcomes()
     for outcome in outcomes:
-        if outcome not in ("passed", "seconds", "warnings"):
+        if outcome not in ("passed", "seconds", "warning"):
             assert outcomes[outcome] == 0
     return outcomes.get("passed", 0)
 
@@ -145,7 +147,7 @@ def test_filename_drop_prefix(testdir, prefix):
         path = Path(plot)
         assert path.parts[0] == "plots"
         assert path.stem == plot_name
-        assert path.suffix in [".pdf", ".png"]
+        assert path.suffix in [".pdf", ".png", ".pickle"]
         assert path.exists()
 
 
@@ -221,3 +223,41 @@ def test_default_dir(testdir):
         assert path.parts[0] == "myoverridedir"
         assert path.name.startswith("package.tests.")
         assert path.exists()
+
+
+def test_pickle_files_contain_a_figure(testdir):
+    """ Verify that pickle files can be loaded and contain the correct
+    figure. Th figure is tested by simply checking the number of axes.
+
+    For the expected number of axes, see test_plt.py::test_saveas_pickle
+
+    """
+    copy_all_tests(testdir, "package/tests")
+
+    result = testdir.runpytest("-v", "--plots")
+
+    saved_files = [Path(plot) for _, plot in saved_plots(result)]
+    saved_pickle_files = [path for path in saved_files if path.suffix == ".pickle"]
+
+    for pickle_file in saved_pickle_files:
+        try:
+            pickle.load(open(pickle_file, "rb"))
+            assert 6 == len(plt.gcf().axes)
+        except pickle.UnpicklingError:
+            assert False, "Could not read a pickled file {}".format(str(pickle_file))
+
+
+def test_image_files_are_not_pickled(testdir):
+    """ Verify that other output file formats are not mistakenly being
+    pickled.
+    """
+    copy_all_tests(testdir, "package/tests")
+
+    result = testdir.runpytest("-v", "--plots")
+
+    saved_files = [Path(plot) for _, plot in saved_plots(result)]
+    saved_img_files = [path for path in saved_files if path.suffix != ".pickle"]
+
+    for img_file in saved_img_files:
+        with pytest.raises(pickle.UnpicklingError):
+            pickle.load(open(img_file, "rb"))

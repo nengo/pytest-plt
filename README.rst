@@ -99,6 +99,18 @@ if the PDF format is unsuitable.
 
    plt.saveas = "%s.png" % (plt.saveas[:-4],)
 
+Moreover, using the extension ``.pickle`` will tell pytest-plt to pickle the
+current figure object. The figure can then be inspected using pyplot's
+interactive GUI after unpickling the file. You can achieve this with the
+following code snippet.
+
+.. code-block:: python
+
+   import pickle
+   import matplotlib.pyplot as plt
+   pickle.load(open('path/to/my/plot/figure.pickle', 'rb'))
+   plt.show()
+
 Configuration
 =============
 

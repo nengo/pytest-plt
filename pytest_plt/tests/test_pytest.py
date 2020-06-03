@@ -49,7 +49,7 @@ def assert_all_passed(result):
     """
     outcomes = result.parseoutcomes()
     for outcome in outcomes:
-        if outcome not in ("passed", "seconds", "warnings"):
+        if outcome not in ("passed", "seconds", "warnings", "warning"):
             assert outcomes[outcome] == 0
     return outcomes.get("passed", 0)
 

@@ -12,7 +12,9 @@ file will be run due to configuration in ``setup.cfg``. However, other
 test files can be run manually by passing them to ``pytest``.
 """
 
+import os
 from pathlib import Path
+import pickle
 
 import pytest
 from pytest_plt.plugin import Mock
@@ -145,7 +147,7 @@ def test_filename_drop_prefix(testdir, prefix):
         path = Path(plot)
         assert path.parts[0] == "plots"
         assert path.stem == plot_name
-        assert path.suffix in [".pdf", ".png"]
+        assert path.suffix in [".pdf", ".png", ".pickle"]
         assert path.exists()
 
 
@@ -221,3 +223,27 @@ def test_default_dir(testdir):
         assert path.parts[0] == "myoverridedir"
         assert path.name.startswith("package.tests.")
         assert path.exists()
+
+
+def test_pickle_files(testdir):
+    """Verify that pickle files can be loaded and contain the correct figure.
+
+    The figure is checked by the number of axes (see test_plt.py::test_saveas_pickle).
+    It is also written to the "plots" folder in `testdir` as a ".png".
+    """
+    copy_all_tests(testdir, "package/tests")
+
+    result = testdir.runpytest("-v", "--plots")
+    saved_files = [Path(plot) for _, plot in saved_plots(result)]
+
+    saved_pickle_files = [path for path in saved_files if path.suffix == ".pickle"]
+    for pickle_file in saved_pickle_files:
+        fig = pickle.load(open(pickle_file, "rb"))
+        fig.savefig(os.path.splitext(pickle_file)[0] + ".png")
+        assert len(fig.axes) == 6
+
+    # verify that other output file formats are not mistakenly being pickled
+    saved_img_files = [path for path in saved_files if path.suffix != ".pickle"]
+    for img_file in saved_img_files:
+        with pytest.raises(pickle.UnpicklingError):
+            pickle.load(open(img_file, "rb"))

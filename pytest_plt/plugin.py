@@ -2,6 +2,7 @@
 
 import errno
 import os
+import pickle
 import re
 
 from matplotlib import use as mpl_use
@@ -147,10 +148,16 @@ class Plotter(Recorder):
 
     def save(self, path):
         mkdir_p(os.path.dirname(path))
-        savefig_kw = {"bbox_inches": "tight"}
-        if hasattr(self.plt, "bbox_extra_artists"):
-            savefig_kw["bbox_extra_artists"] = self.plt.bbox_extra_artists
-        self.plt.savefig(path, **savefig_kw)
+
+        if path.endswith(".pickle"):
+            with open(path, "wb") as fh:
+                pickle.dump(self.plt.gcf(), fh)
+        else:
+            savefig_kw = {"bbox_inches": "tight"}
+            if hasattr(self.plt, "bbox_extra_artists"):
+                savefig_kw["bbox_extra_artists"] = self.plt.bbox_extra_artists
+            self.plt.savefig(path, **savefig_kw)
+
         super(Plotter, self).save(path)
 
 

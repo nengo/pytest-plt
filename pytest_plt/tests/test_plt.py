@@ -3,6 +3,7 @@
 """Test the plt fixture."""
 
 import numpy as np
+import pytest
 
 
 def test_rectification(plt):
@@ -44,9 +45,10 @@ def test_saveas(plt):
     plt.saveas = None
 
 
-def test_saveas_pickle(plt):
+@pytest.mark.parametrize("ext", ["pkl", "pickle"])
+def test_saveas_pickle(plt, ext):
     axes = plt.subplots(2, 3)[1]  # The pickled figure will contain six axes.
     x = np.linspace(-1, 1, 21)
     for k, ax in enumerate(axes.ravel()):
         ax.plot(x, x ** k)
-    plt.saveas = "%s.pickle" % (plt.saveas[:-4],)
+    plt.saveas = "%s.%s" % (plt.saveas[:-4], ext)

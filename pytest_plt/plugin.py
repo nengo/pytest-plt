@@ -7,9 +7,9 @@ import re
 
 from matplotlib import use as mpl_use
 
-mpl_use("Agg")  # noqa: E402
-from matplotlib import pyplot as mpl_plt
-import pytest
+mpl_use("Agg")
+from matplotlib import pyplot as mpl_plt  # noqa: E402
+import pytest  # noqa: E402
 
 
 def mkdir_p(path):
@@ -149,7 +149,7 @@ class Plotter(Recorder):
     def save(self, path):
         mkdir_p(os.path.dirname(path))
 
-        if path.endswith(".pickle"):
+        if path.endswith(".pkl") or path.endswith(".pickle"):
             with open(path, "wb") as fh:
                 pickle.dump(self.plt.gcf(), fh)
         else:

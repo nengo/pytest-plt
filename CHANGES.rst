@@ -25,7 +25,7 @@ Release History
 **Added**
 
 - Added the ability to save plots as pickle files using the
-  ``.pickle`` extension with ``plt.saveas``. (`#23`_)
+  ``.pkl`` or ``.pickle`` extensions with ``plt.saveas``. (`#23`_)
 
 .. _#23: https://github.com/nengo/pytest-plt/pull/23
 

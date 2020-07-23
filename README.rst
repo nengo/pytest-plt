@@ -99,17 +99,39 @@ if the PDF format is unsuitable.
 
    plt.saveas = "%s.png" % (plt.saveas[:-4],)
 
-Moreover, using the extension ``.pickle`` will tell pytest-plt to pickle the
-current figure object. The figure can then be inspected using pyplot's
-interactive GUI after unpickling the file. You can achieve this with the
-following code snippet.
+Using plt.show
+--------------
+
+If you want to inspect a figure using
+the GUI that pops up with ``plt.show()``,
+you can achieve this by saving a plot with the
+``.pkl`` or ``.pickle`` extension.
+pytest-plt will pickle the current figure object
+for later inspection.
+
+Building on the previous example,
+you can change the ``saveas`` attribute like so:
 
 .. code-block:: python
 
-   import pickle
-   import matplotlib.pyplot as plt
-   pickle.load(open('path/to/my/plot/figure.pickle', 'rb'))
-   plt.show()
+   def test_rectification(plt):
+       values = list(range(-10, 11))
+       rectified = [v if v > 0 else 0 for v in values]
+       assert all(v >= 0 for v in rectified)
+       plt.plot(values, label="Original")
+       plt.plot(rectified, label="Rectified")
+       plt.legend()
+       plt.saveas = "test_rec.pkl"
+
+Then use the following snippet to inspect the figure.
+
+.. code-block:: python
+
+   >>> import pickle
+   >>> import matplotlib.pyplot as plt
+   >>> with open("path/to/test_rec.pkl", "rb") as fh:
+   ...     fig = pickle.load(fh)
+   >>> plt.show()
 
 Configuration
 =============

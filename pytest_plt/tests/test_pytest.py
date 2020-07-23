@@ -147,7 +147,7 @@ def test_filename_drop_prefix(testdir, prefix):
         path = Path(plot)
         assert path.parts[0] == "plots"
         assert path.stem == plot_name
-        assert path.suffix in [".pdf", ".png", ".pickle"]
+        assert path.suffix in [".pdf", ".png", ".pkl", ".pickle"]
         assert path.exists()
 
 
@@ -236,14 +236,20 @@ def test_pickle_files(testdir):
     result = testdir.runpytest("-v", "--plots")
     saved_files = [Path(plot) for _, plot in saved_plots(result)]
 
-    saved_pickle_files = [path for path in saved_files if path.suffix == ".pickle"]
+    saved_pickle_files = [
+        path for path in saved_files if path.suffix in [".pickle", ".pkl"]
+    ]
     for pickle_file in saved_pickle_files:
-        fig = pickle.load(open(pickle_file, "rb"))
-        fig.savefig(os.path.splitext(pickle_file)[0] + ".png")
+        with open(str(pickle_file), "rb") as fh:
+            fig = pickle.load(fh)
+        fig.savefig("%s.png" % (os.path.splitext(str(pickle_file))[0],))
         assert len(fig.axes) == 6
 
     # verify that other output file formats are not mistakenly being pickled
-    saved_img_files = [path for path in saved_files if path.suffix != ".pickle"]
+    saved_img_files = [
+        path for path in saved_files if path.suffix not in [".pkl", ".pickle"]
+    ]
     for img_file in saved_img_files:
         with pytest.raises(pickle.UnpicklingError):
-            pickle.load(open(img_file, "rb"))
+            with open(str(img_file), "rb") as fh:
+                pickle.load(fh)

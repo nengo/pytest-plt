@@ -8,8 +8,8 @@ import re
 from matplotlib import use as mpl_use
 
 mpl_use("Agg")
-from matplotlib import pyplot as mpl_plt  # noqa: E402
 import pytest  # noqa: E402
+from matplotlib import pyplot as mpl_plt  # noqa: E402
 
 
 def mkdir_p(path):
@@ -158,7 +158,7 @@ class Plotter(Recorder):
                 savefig_kw["bbox_extra_artists"] = self.plt.bbox_extra_artists
             self.plt.savefig(path, **savefig_kw)
 
-        super(Plotter, self).save(path)
+        super().save(path)
 
 
 @pytest.fixture

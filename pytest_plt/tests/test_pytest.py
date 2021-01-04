@@ -13,10 +13,11 @@ test files can be run manually by passing them to ``pytest``.
 """
 
 import os
-from pathlib import Path
 import pickle
+from pathlib import Path
 
 import pytest
+
 from pytest_plt.plugin import Mock
 
 pytest_plugins = ["pytester"]

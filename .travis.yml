@@ -22,6 +22,7 @@ env:
     - SCRIPT="test"
     - TEST_ARGS=""
     - BRANCH_NAME="${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}"
+    - PIP_USE_FEATURE="2020-resolver"
     - COV_CORE_SOURCE="pytest_plt"
     - COV_CORE_CONFIG=".coveragerc"
     - COV_CORE_DATAFILE=".coverage.eager"
@@ -59,7 +60,7 @@ jobs:
       - provider: pypi
         server: https://test.pypi.org/legacy/
         user: tbekolay
-        password: $PYPI_TOKEN
+        password: $PYPI_TEST_TOKEN
         distributions: "sdist bdist_wheel "
         on:
           all_branches: true
@@ -89,11 +90,7 @@ before_install:
   # install/run nengo-bones
   - pip install git+https://github.com/nengo/nengo-bones#egg=nengo-bones
   - bones-generate --output-dir .ci ci-scripts
-  - if [[ "$TRAVIS_PYTHON_VERSION" < "3.6" ]]; then
-        echo "Skipping bones-check because Python $TRAVIS_PYTHON_VERSION < 3.6";
-    else
-        bones-check --verbose;
-    fi
+  - bones-check --verbose
   # display environment info
   - pip freeze
 

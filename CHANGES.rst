@@ -26,6 +26,11 @@ Release History
 
 - Python 3.5, which is past its end of life, is no longer supported. (`#26`_)
 
+**Fixed**
+
+- Config options are now properly added to Pytest, eliminating a warning
+  that was raised if a config option was set. (`#26`_)
+
 .. _#26: https://github.com/nengo/pytest-plt/pull/26
 
 1.1.0 (August 17, 2020)

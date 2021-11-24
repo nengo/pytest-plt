@@ -13,10 +13,11 @@ test files can be run manually by passing them to ``pytest``.
 """
 
 import os
-from pathlib import Path
 import pickle
+from pathlib import Path
 
 import pytest
+
 from pytest_plt.plugin import Mock
 
 pytest_plugins = ["pytester"]
@@ -70,7 +71,7 @@ def copy_all_tests(testdir, path):
     ]
     for test in tests:
         test_path = testdir.copy_example(test.name)
-        test_path.rename("%s/%s" % (path, test.name))
+        test_path.rename(f"{path}/{test.name}")
 
 
 def saved_plots(result):
@@ -116,18 +117,14 @@ def test_plt_plots(testdir):
         assert p.name.startswith("package.tests.")
 
 
-@pytest.mark.parametrize("prefix", ["package/", "package/folder/tests/"])
+@pytest.mark.parametrize("prefix", [r"package\.", r"package\.folder\.tests\."])
 def test_filename_drop_prefix(testdir, prefix):
     """Tests removing strings from the start of a plot filename.
 
     This is the most common use case of filename_drop.
     """
     copy_all_tests(testdir, "package/folder/tests")
-    testdir.makeini(
-        "\n".join(
-            ["[pytest]", "plt_filename_drop =", "    %s" % prefix.replace("/", r"\.")]
-        )
-    )
+    testdir.makeini("\n".join(["[pytest]", "plt_filename_drop =", f"    {prefix}"]))
 
     # All tests should pass
     result = testdir.runpytest("-v", "--plots")
@@ -137,7 +134,7 @@ def test_filename_drop_prefix(testdir, prefix):
     saved = saved_plots(result)
     assert 0 < len(saved) <= n_passed
 
-    prefix_parts = prefix.strip("/").split("/")
+    prefix_parts = prefix.strip(r"\.").split(r"\.")
     for test, plot in saved:
         test_parts = test.split("/")
         for prefix_part, test_part in zip(prefix_parts, test_parts):
@@ -242,7 +239,7 @@ def test_pickle_files(testdir):
     for pickle_file in saved_pickle_files:
         with open(str(pickle_file), "rb") as fh:
             fig = pickle.load(fh)
-        fig.savefig("%s.png" % (os.path.splitext(str(pickle_file))[0],))
+        fig.savefig(f"{os.path.splitext(str(pickle_file))[0]}.png")
         assert len(fig.axes) == 6
 
     # verify that other output file formats are not mistakenly being pickled

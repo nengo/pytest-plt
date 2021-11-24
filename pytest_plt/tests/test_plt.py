@@ -20,7 +20,7 @@ def test_rectification(plt):
     plt.plot(rectified, label="Rectified")
     plt.legend()
     # Use png to render easier in docs
-    plt.saveas = "%s.png" % (plt.saveas[:-4],)
+    plt.saveas = f"{plt.saveas[:-4]}.png"
 
 
 def test_mock_iter(plt):
@@ -51,4 +51,4 @@ def test_saveas_pickle(plt, ext):
     x = np.linspace(-1, 1, 21)
     for k, ax in enumerate(axes.ravel()):
         ax.plot(x, x ** k)
-    plt.saveas = "%s.%s" % (plt.saveas[:-4], ext)
+    plt.saveas = f"{plt.saveas[:-4]}.{ext}"

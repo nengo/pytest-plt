@@ -8,8 +8,10 @@ import re
 from matplotlib import use as mpl_use
 
 mpl_use("Agg")
-from matplotlib import pyplot as mpl_plt  # noqa: E402
 import pytest  # noqa: E402
+
+# pylint: disable=ungrouped-imports
+from matplotlib import pyplot as mpl_plt  # noqa: E402
 
 
 def mkdir_p(path):
@@ -31,6 +33,15 @@ def pytest_addoption(parser):
         help="Save plots (can optionally specify a directory for plots).",
     )
 
+    parser.addini(
+        "plt_filename_drop",
+        default="",
+        help="List of regular expressions to remove from plot filenames.",
+    )
+    parser.addini(
+        "plt_dirname", default="plots", help="Default directory in which to save plots."
+    )
+
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_report_teststatus(report):
@@ -41,7 +52,7 @@ def pytest_report_teststatus(report):
         for key, val in report.user_properties:
             if key == "plt_saved":
                 outcome.force_result(
-                    (category, shortletter, "%s\n└─ Saved %r" % (word, val))
+                    (category, shortletter, f"{word}\n└─ Saved '{val}'")
                 )
             break
 
@@ -111,7 +122,7 @@ class Recorder:
                 filename = filename[: span[0]] + filename[span[1] :]
                 match = re.search(pattern, filename)
 
-        return "%s.%s" % (filename, ext)
+        return f"{filename}.{ext}"
 
     def __enter__(self):
         raise NotImplementedError()
@@ -158,7 +169,7 @@ class Plotter(Recorder):
                 savefig_kw["bbox_extra_artists"] = self.plt.bbox_extra_artists
             self.plt.savefig(path, **savefig_kw)
 
-        super(Plotter, self).save(path)
+        super().save(path)
 
 
 @pytest.fixture
@@ -177,11 +188,11 @@ def plt(request):
     be used as is.
     """
     # Read plt_filename_drop from .ini config file
-    filename_drop = request.config.inicfg.get("plt_filename_drop", "")
+    filename_drop = request.config.getini("plt_filename_drop")
     filename_drop = [s for s in filename_drop.split("\n") if len(s) > 0]
 
     # Read plt_dirname from .ini config file
-    default_dirname = request.config.inicfg.get("plt_dirname", "plots")
+    default_dirname = request.config.getini("plt_dirname")
 
     # Read dirname from command line, which takes precedence over .ini config
     dirname = request.config.getvalue("plots")

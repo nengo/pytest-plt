@@ -2,10 +2,10 @@ skip_branch_with_pr: true
 
 environment:
   matrix:
-    - PYTHON: "C:\\Miniconda36-x64"
+    - PYTHON: "C:\\Miniconda37-x64"
 
 init:
-  - set PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
+  - set PATH=%PYTHON%;%PYTHON%\\Scripts;%PYTHON%\\Library;%PYTHON%\\Library\\bin;%PYTHON%\\Library\\mingw-w64\\bin;%PATH%
 
 install:
   - conda config --set always_yes yes --set changeps1 no

@@ -22,6 +22,11 @@ Release History
 1.1.1 (unreleased)
 ==================
 
+**Changed**
+
+- Python 3.5, which is past its end of life, is no longer supported. (`#26`_)
+
+.. _#26: https://github.com/nengo/pytest-plt/pull/26
 
 1.1.0 (August 17, 2020)
 =======================

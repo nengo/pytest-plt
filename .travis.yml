@@ -37,13 +37,17 @@ jobs:
   -
     env:
       SCRIPT="test"
-    python: 3.5
+    python: 3.7
     cache: False
   -
     env:
       SCRIPT="test"
-    python: 3.7
-    dist: xenial
+    python: 3.8
+  -
+    env:
+      SCRIPT="test"
+    python: 3.9
+    dist: bionic
   -
     env:
       SCRIPT="docs"
@@ -59,7 +63,7 @@ jobs:
       - provider: pypi
         server: https://test.pypi.org/legacy/
         user: tbekolay
-        password: $PYPI_TOKEN
+        password: $PYPI_TEST_TOKEN
         distributions: "sdist bdist_wheel "
         on:
           all_branches: true
@@ -89,11 +93,7 @@ before_install:
   # install/run nengo-bones
   - pip install git+https://github.com/nengo/nengo-bones#egg=nengo-bones
   - bones-generate --output-dir .ci ci-scripts
-  - if [[ "$TRAVIS_PYTHON_VERSION" < "3.6" ]]; then
-        echo "Skipping bones-check because Python $TRAVIS_PYTHON_VERSION < 3.6";
-    else
-        bones-check --verbose;
-    fi
+  - bones-check --verbose
   # display environment info
   - pip freeze
 

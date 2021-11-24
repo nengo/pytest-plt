@@ -16,7 +16,6 @@ manifest_in: {}
 
 setup_py:
   license: MIT license
-  python_requires: ">=3.5"
   install_req:
     - matplotlib
     - pytest
@@ -33,9 +32,10 @@ setup_py:
     - "Framework :: Pytest"
     - "License :: OSI Approved :: MIT License"
     - "Programming Language :: Python :: 3 :: Only"
-    - "Programming Language :: Python :: 3.5"
     - "Programming Language :: Python :: 3.6"
     - "Programming Language :: Python :: 3.7"
+    - "Programming Language :: Python :: 3.8"
+    - "Programming Language :: Python :: 3.9"
 
 setup_cfg:
   pytest:
@@ -52,7 +52,7 @@ setup_cfg:
       - wrong-import-position
 
 docs_conf_py:
-  analytics_id: UA-41658423-2
+  tagmanager_id: GTM-KWCR2HN
   nengo_logo: general-square-light.svg
   one_page: True
 
@@ -66,11 +66,13 @@ travis_yml:
     - script: static
     - script: test-coverage
     - script: test
-      python: 3.5
+      python: 3.7
       cache: false  # disable the cache for one build to make sure that works
     - script: test
-      python: 3.7
-      dist: xenial  # currently only xenial has python 3.7
+      python: 3.8
+    - script: test
+      python: 3.9
+      dist: bionic
     - script: docs
   pypi_user: tbekolay
   deploy_dists:
@@ -102,3 +104,9 @@ codecov_yml: {}
 pre_commit_config_yaml: {}
 
 pyproject_toml: {}
+
+version_py:
+  major: 1
+  minor: 1
+  patch: 1
+  release: false

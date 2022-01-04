@@ -4,9 +4,9 @@
 pytest-plt license
 ******************
 
-MIT License
+Copyright (c) 2018-2022 Applied Brain Research
 
-Copyright (c) 2018-2021 Applied Brain Research
+**MIT License**
 
 Permission is hereby granted, free of charge,
 to any person obtaining a copy of this software

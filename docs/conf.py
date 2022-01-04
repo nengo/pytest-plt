@@ -74,7 +74,7 @@ user_agent = "pytest_plt"
 
 project = "pytest-plt"
 authors = "Applied Brain Research"
-copyright = "2018-2021 Applied Brain Research"
+copyright = "2018-2022 Applied Brain Research"
 version = ".".join(pytest_plt.__version__.split(".")[:2])  # Short X.Y version
 release = pytest_plt.__version__  # Full version, with tags
 

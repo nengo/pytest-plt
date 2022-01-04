@@ -4,9 +4,9 @@ repo_name: nengo/pytest-plt
 description: Fixtures for quickly making Matplotlib plots in tests
 
 copyright_start: 2018
+license: mit
 
-license_rst:
-  type: mit
+license_rst: {}
 
 contributing_rst: {}
 
@@ -15,7 +15,6 @@ contributors_rst: {}
 manifest_in: {}
 
 setup_py:
-  license: MIT license
   install_req:
     - matplotlib
     - pytest
@@ -30,7 +29,6 @@ setup_py:
   classifiers:
     - "Development Status :: 5 - Production/Stable"
     - "Framework :: Pytest"
-    - "License :: OSI Approved :: MIT License"
     - "Programming Language :: Python :: 3 :: Only"
     - "Programming Language :: Python :: 3.6"
     - "Programming Language :: Python :: 3.7"

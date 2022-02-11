@@ -50,5 +50,5 @@ def test_saveas_pickle(plt, ext):
     axes = plt.subplots(2, 3)[1]  # The pickled figure will contain six axes.
     x = np.linspace(-1, 1, 21)
     for k, ax in enumerate(axes.ravel()):
-        ax.plot(x, x ** k)
+        ax.plot(x, x**k)
     plt.saveas = f"{plt.saveas[:-4]}.{ext}"

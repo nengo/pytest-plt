@@ -5,6 +5,7 @@ description: Fixtures for quickly making Matplotlib plots in tests
 
 copyright_start: 2018
 license: mit
+main_branch: main
 
 license_rst: {}
 
@@ -37,7 +38,9 @@ setup_py:
 
 setup_cfg:
   pytest:
-    addopts: []
+    addopts:
+      - "--cov"
+      - "--cov-append"
     filterwarnings:
       - ignore:testdir.copy_example is an experimental api
     plt_filename_drop:
@@ -48,56 +51,21 @@ setup_cfg:
     disable:
       - missing-docstring
       - wrong-import-position
+  coverage:
+    omit_files:
+      - "*/setup.py"
 
 docs_conf_py:
-  tagmanager_id: GTM-KWCR2HN
   nengo_logo: general-square-light.svg
   one_page: True
-
-travis_yml:
-  python: 3.6
-  global_vars:
-    COV_CORE_SOURCE: pytest_plt
-    COV_CORE_CONFIG: .coveragerc
-    COV_CORE_DATAFILE: .coverage.eager
-  jobs:
-    - script: static
-    - script: test-coverage
-    - script: test
-      python: 3.7
-      cache: false  # disable the cache for one build to make sure that works
-    - script: test
-      python: 3.8
-    - script: test
-      python: 3.9
-      dist: bionic
-    - script: docs
-  pypi_user: tbekolay
-  deploy_dists:
-    - sdist
-    - bdist_wheel
-  slack_notifications: "HdSBp1MsF1Btg38YM0I3/YJHiJVwKxH2D3VllOc2kSPMesDxXYSKWh7ePoGxcD\
-    0GfX9diRFOEM8assc5gMv6T8ySGpOR5s895mnswv6v6VaZCqjoIxB56D+EC9tt+SpbKuwGJOgSKKki2Bye\
-    5IMVDoEb5HL9+YBOSMCW6jOz95fLyu054OBGFhf/s2Wlw7CBktL3mlxs7tJNvXkr7KIAIFYv++IwzNbVOT\
-    qOxhOrR7h2FlRri1GfkWO2MHDiiwNQy0mfBPHr8jKgHvsGS5yE/LM67WiwSHouBvB/7+iel7HpMmibZwqR\
-    jnh6JPZ+1Y7y9NJHdPcbBTJBLTBvTnN1w06F9qxvoqNOjXAZcmewB0AMXivgkEiVScEyqbT+FwWp7Erl8m\
-    4pai50FRS8Hi5H6khmsYxlDovkM4hoIqCjUmHyO2al4S8EjI7EwUEUT5ufelRuA+oLCJcHFO8KyMYCR4XI\
-    uJJM4g3h5EhPgGCRVNUZzKFotlsCLjT3PbUWCXsWM6fSR/QqlURlAFVRHlVXYEM9EaDBWhFyBJEHriDFOR\
-    zkKmxYndRoRFph5q38UHb9ta7QYsHzHtB7X0Oz10TSmW6opP3bbFac2eLmC1ys5BiM7YZ3d8X46IK1pkUp\
-    Im84eh8sSziatbc57q/qJnT8WGmJ8CthOom2xxzZJhvpALw="
 
 ci_scripts:
   - template: static
   - template: test
-  - template: test
-    output_name: test-coverage
     coverage: true
   - template: docs
-    pip_install:
-      - "pytest>=4"
   - template: deploy
-
-codecov_yml: {}
+    wheel: true
 
 pre_commit_config_yaml: {}
 

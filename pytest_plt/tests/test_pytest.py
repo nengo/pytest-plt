@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=missing-docstring
 
-"""The main test file that should be run on a regular basis.
+"""
+The main test file that should be run on a regular basis.
 
 The goal of this file is to test pytest_plt internals and run all other
 test files with various invocations of pytest to ensure that all possible
@@ -46,7 +47,8 @@ def test_mock():
 
 
 def assert_all_passed(result):
-    """Assert that all outcomes are 0 except for 'passed'.
+    """
+    Assert that all outcomes are 0 except for 'passed'.
 
     Also returns the number of passed tests.
     """
@@ -119,7 +121,8 @@ def test_plt_plots(testdir):
 
 @pytest.mark.parametrize("prefix", [r"package\.", r"package\.folder\.tests\."])
 def test_filename_drop_prefix(testdir, prefix):
-    """Tests removing strings from the start of a plot filename.
+    """
+    Tests removing strings from the start of a plot filename.
 
     This is the most common use case of filename_drop.
     """
@@ -149,7 +152,8 @@ def test_filename_drop_prefix(testdir, prefix):
 
 
 def test_filename_drop_within(testdir):
-    """Tests removing strings within a plot filename, with complicated regexes.
+    """
+    Tests removing strings within a plot filename, with complicated regexes.
 
     These are less common use cases of filename_drop.
     """
@@ -223,10 +227,12 @@ def test_default_dir(testdir):
 
 
 def test_pickle_files(testdir):
-    """Verify that pickle files can be loaded and contain the correct figure.
+    """
+    Verify that pickle files can be loaded and contain the correct figure.
 
-    The figure is checked by the number of axes (see test_plt.py::test_saveas_pickle).
-    It is also written to the "plots" folder in `testdir` as a ".png".
+    The figure is checked by the number of axes (see
+    test_plt.py::test_saveas_pickle). It is also written to the "plots" folder in
+    `testdir` as a ".png".
     """
     copy_all_tests(testdir, "package/tests")
 

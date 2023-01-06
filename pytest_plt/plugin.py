@@ -174,7 +174,8 @@ class Plotter(Recorder):
 
 @pytest.fixture
 def plt(request):
-    """A pyplot-compatible plotting interface.
+    """
+    A pyplot-compatible plotting interface.
 
     Use this to create plots in your tests using the ``matplotlib.pyplot``
     interface.
@@ -209,4 +210,4 @@ def plt(request):
             request.node.user_properties.append(("plt_saved", plotter.saved))
 
     request.addfinalizer(_finalize)
-    return plotter.__enter__()
+    return plotter.__enter__()  # pylint: disable=unnecessary-dunder-call

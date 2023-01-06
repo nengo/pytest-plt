@@ -7,11 +7,12 @@ import pytest
 
 
 def test_rectification(plt):
-    """The test shown in the documentation.
+    """
+    The test shown in the documentation.
 
-    Included here to be extra sure that the example works when copy-pasted
-    into a user's tests, and to easily generate the plot that we display
-    in documentation.
+    Included here to be extra sure that the example works when copy-pasted into a
+    user's tests, and to easily generate the plot that we display in
+    documentation.
     """
     values = list(range(-10, 11))
     rectified = [v if v > 0 else 0 for v in values]

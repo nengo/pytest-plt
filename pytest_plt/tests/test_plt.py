@@ -31,6 +31,13 @@ def test_mock_iter(plt):
     plt.saveas = None
 
 
+def test_mock_subplots(plt):
+    fig, axes = plt.subplots(2, 1)
+    axes[0].plot(np.arange(10))
+    axes[1].plot(-np.arange(10))
+    fig.tight_layout()
+
+
 def test_simple_plot(plt):
     plt.plot(np.linspace(0, 1, 20), np.linspace(0, 2, 20))
 

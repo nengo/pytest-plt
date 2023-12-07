@@ -58,6 +58,8 @@ def pytest_report_teststatus(report):
 
 
 class Mock:
+    multi_functions = {}
+
     def __init__(self, *args, **kwargs):
         pass
 
@@ -81,8 +83,16 @@ class Mock:
             mockType = type(name, (), {})
             mockType.__module__ = __name__
             return mockType
+        elif name in cls.multi_functions:
+            return lambda *args, **kwargs: tuple(
+                Mock() for _ in range(cls.multi_functions[name])
+            )
         else:
             return Mock()
+
+
+class PltMock(Mock):
+    multi_functions = {"subplots": 2}
 
 
 class Recorder:
@@ -139,7 +149,7 @@ class Plotter(Recorder):
         if self.record:
             self.plt = mpl_plt
         else:
-            self.plt = Mock()
+            self.plt = PltMock()
         self.plt.saveas = self.get_filename(ext="pdf")
         return self.plt
 

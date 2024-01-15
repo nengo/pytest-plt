@@ -25,7 +25,7 @@ setup_py:
     - numpydoc>=0.9.2
     - sphinx
   tests_req:
-    - pytest-cov  # required since `addopts = --cov` in setup.cfg
+    - pytest-cov # required since `addopts = --cov` in setup.cfg
   entry_points:
     pytest11:
       - "plt = pytest_plt.plugin"
@@ -77,4 +77,4 @@ version_py:
   major: 1
   minor: 1
   patch: 1
-  release: false
+  release: true

@@ -19,8 +19,8 @@ Release History
    - Removed
    - Fixed
 
-1.1.1 (unreleased)
-==================
+1.1.1 (January 15, 2024)
+========================
 
 **Changed**
 
@@ -30,8 +30,10 @@ Release History
 
 - Config options are now properly added to Pytest, eliminating a warning
   that was raised if a config option was set. (`#26`_)
+- Handled multiple outputs when mocking out ``plt.subplots``. (`#29`_)
 
 .. _#26: https://github.com/nengo/pytest-plt/pull/26
+.. _#29: https://github.com/nengo/pytest-plt/pull/29
 
 1.1.0 (August 17, 2020)
 =======================

@@ -76,5 +76,5 @@ pyproject_toml: {}
 version_py:
   major: 1
   minor: 1
-  patch: 1
-  release: true
+  patch: 2
+  release: false

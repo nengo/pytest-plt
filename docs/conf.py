@@ -16,7 +16,6 @@ extensions = [
     "sphinx.ext.todo",
     "nbsphinx",
     "nengo_sphinx_theme",
-    "nengo_sphinx_theme.ext.backoff",
     "nengo_sphinx_theme.ext.sourcelinks",
     "notfound.extension",
     "numpydoc",

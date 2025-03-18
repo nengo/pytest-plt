@@ -4,7 +4,7 @@
 pytest-plt license
 ******************
 
-Copyright (c) 2018-2024 Applied Brain Research
+Copyright (c) 2018-2025 Applied Brain Research
 
 **MIT License**
 

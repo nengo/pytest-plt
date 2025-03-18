@@ -16,7 +16,6 @@ extensions = [
     "sphinx.ext.todo",
     "nbsphinx",
     "nengo_sphinx_theme",
-    "nengo_sphinx_theme.ext.backoff",
     "nengo_sphinx_theme.ext.sourcelinks",
     "notfound.extension",
     "numpydoc",
@@ -74,7 +73,7 @@ user_agent = "pytest_plt"
 
 project = "pytest-plt"
 authors = "Applied Brain Research"
-copyright = "2018-2024 Applied Brain Research"
+copyright = "2018-2025 Applied Brain Research"
 version = ".".join(pytest_plt.__version__.split(".")[:2])  # Short X.Y version
 release = pytest_plt.__version__  # Full version, with tags
 

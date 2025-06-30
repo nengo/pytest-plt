@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import contextlib
 import errno
 import os
 import pickle
@@ -114,7 +115,7 @@ class Recorder:
     def dirname(self, _dirname):
         if _dirname is not None:
             _dirname = os.path.normpath(_dirname)
-            if not os.path.exists(_dirname):
+            with contextlib.suppress(FileExistsError):
                 os.makedirs(_dirname)
         self._dirname = _dirname
 
